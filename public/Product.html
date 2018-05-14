@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+      .main{
+               padding: 50px;
+               margin: 50px;
+          }
+  </style>
+</head>
+<body class="container">
+   <div id="app">
+       <div class="well">
+          <div class="row">
+            <div class="col-sm-4">
+            <button class="btn btn-primary btn-lg" v-on:click="gotoHome">Home</button>&nbsp &nbsp    
+            <button class="btn btn-primary btn-lg" v-on:click="viewcart">View Cart</button>            
+            </div> 
+            <div class="col-sm-8"></div>  
+         </div></div>
+         <div class="row main">
+          <div class="col-sm-2"></div> 
+          <div class="col-sm-8">
+          <div class="card">
+          <div class="card-header"><h1>Enter Details</h1></div>
+          <div class="card-body">
+          <label for="text">Product Name</label>
+          <input v-model="name" type="text" id="product"> <br/>
+          <label for="text">Price(in Rs)</label></td>
+          <input v-model="price" type="text" id="product"> <br/>
+          <label for="text">Vendor Name</label></td>
+          <select v-model="vendorid">
+                <option v-for="vendor in vendors" :value="vendor.id">{{vendor.name}}</option>
+          </select>
+          </div>
+          <div class="card-footer">
+          <button class="btn btn-primary btn-lg" v-on:click="addProduct">ADD PRODUCT</button> 
+          </div></div>
+          </div>
+          <div class="col-sm-2"></div> 
+        </div> 
+      
+   </div>
+    <script>
+        let app=new Vue({
+            el:'#app',
+            data:{
+                name:"",
+                price:0,
+                vendorid:0,
+                vendors:[]
+            },
+            mounted(){
+                    var $this = this;
+                    axios.get('/products/vendors')
+                    .then((response) => {
+                        this.vendors = response.data
+                    })
+            },
+            methods:{
+                addProduct(){
+                    axios.post("/products/add",{name:this.name,price:this.price,vendorid:this.vendorid})
+                    .then(()=>{
+                         window.location.href = '/';
+                    })
+                },
+                 viewcart(){
+                    // window.location.href = '/showCart';
+                     axios.get("/cart/")
+                    .then((res)=>{ 
+                    window.location.href = res.data;
+                   })
+                },
+                gotoHome(){
+                    window.location.href = '/';
+                }
+                
+            }
+        })
+        </script>
+</body>
+</html>
