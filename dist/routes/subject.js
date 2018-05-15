@@ -16,7 +16,7 @@ route.post('/', (req, res) => {
     connection_1.Subject.create({ name: req.body.name, courseId: req.body.courseId })
         .then(() => {
         console.log("subject added");
-        res.sendStatus(200);
+        res.json("subject added");
     })
         .catch((err) => {
         console.log(err);
@@ -52,7 +52,7 @@ route.post('/:id/teachers', (req, res) => {
     connection_1.Teacher.create({ name: req.body.name, subjectId: req.params.id })
         .then(() => {
         console.log("teacher created");
-        res.sendStatus(200);
+        res.json("teacher created");
     })
         .catch((err) => {
         console.log(err);

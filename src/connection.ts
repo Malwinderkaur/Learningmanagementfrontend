@@ -13,9 +13,13 @@ const Course=db.define('course',{
         allowNull:false
     }
 })
-const Batch=db.define('batch',{
+const Batch=db.define<any,any>('batch',{
     name:{
         type:Sequelize.STRING(40),
+        allowNull:false
+    },
+    startAt:{
+        type:Sequelize.DATEONLY,
         allowNull:false
     }
 })

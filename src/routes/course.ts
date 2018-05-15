@@ -1,5 +1,5 @@
 import express,{Router,Request} from 'express'
-import {Course,Batch,Lecture,Student,Teacher} from '../connection'
+import {Course,Batch,Lecture,Student,Teacher,Subject} from '../connection'
 import sequelize from 'sequelize'
 const route:Router= Router()
 
@@ -17,7 +17,7 @@ route.post('/',(req,res)=>{
     Course.create({name:req.body.name})
     .then(()=>{
         console.log("course added")
-        res.sendStatus(200)
+        res.json("course added")
     })
     .catch((err)=>{
         console.log(err);
@@ -69,9 +69,9 @@ route.get('/:id/batches',(req,res)=>{
 })
 
 route.post('/:id/batches',(req,res)=>{
-    Batch.create({name:req.body.name,courseId:req.params.id})
+    Batch.create({name:req.body.name,startAt:req.body.startAt,courseId:req.params.id})
     .then(()=>{
-        res.sendStatus(200)
+        res.json("batch added")
     })
     .catch((err)=>{
         console.log(err)
@@ -95,28 +95,72 @@ route.use('/:id/batches/:bid',(req,res,next)=>{
 })
 
 route.get('/:id/batches/:bid',(req,res)=>{
-   res.json(res.locals.batch)
-})
-
-route.get('/:id/batches/:bid/lectures',(req,res)=>{
-        Lecture.findAll({
+     Batch.findAll({
          where:{
-             batchId:res.locals.batch.id
-          }       
-    })
-    .then((lectures)=>{
-        res.json(lectures)
+             id:req.params.bid,
+             courseId:req.params.id
+         }
+     })
+    .then((batch)=>{
+        res.json(batch)
+       // res.locals.batch=batch;
+        
     })
     .catch((err)=>{
         console.log(err);
     })
 })
+
+route.get('/:id/batches/:bid/lectures',(req,res)=>{
+       Batch.findOne({
+         where:{
+             id:req.params.bid,
+             courseId:req.params.id
+         }
+     }).then((batch)=>{
+         if(batch){
+              Lecture.findAll({
+         where:{
+             batchId:batch.id
+          } ,
+         include:[{
+                model:Teacher,
+                as:'teacher'
+            },
+            {
+                model:Subject,
+                as:'subject'
+            }
+        ]      
+       })
+     .then((lectures)=>{
+        res.json(lectures)
+       })}
+    else{
+        res.send()
+    }
+     })
+      
+   
+    .catch((err)=>{
+        console.log(err);
+    })
+})
 route.get('/:id/batches/:bid/lectures/:lid',(req,res)=>{
-    Lecture.findOne({
+    Lecture.findAll({
         where:{
              batchId:res.locals.batch.id,
              id:req.params.lid
-          }
+          },
+        include:[{
+                model:Teacher,
+                as:'teacher'
+            },
+            {
+                model:Subject,
+                as:'subject'
+            }
+        ]
     })
     .then((lecture)=>{
         res.json(lecture)
@@ -127,22 +171,80 @@ route.get('/:id/batches/:bid/lectures/:lid',(req,res)=>{
 })
 
 route.get('/:id/batches/:bid/students',(req,res)=>{
-     res.locals.batch.getStudents().then((students)=>{
+      Batch.findOne({
+         where:{
+             id:req.params.bid,
+             courseId:req.params.id
+         }
+     })
+        .then((batch)=>{
+            if(batch){
+                     batch.getStudents().then((students)=>{
         res.json(students)
+          })
+            }
+        else{
+            res.send()
+        }
+            
+        })
+    
+})
+
+
+route.post('/:id/batches/:bid/lectures',(req,res)=>{
+       Batch.findOne({
+         where:{
+             id:req.params.bid,
+             courseId:req.params.id
+         }
+     }).then((batch)=>{
+         if(batch){
+              Lecture.create({
+                    name:req.body.name,
+                    subjectId:req.body.subjectId,
+                    teacherId:req.body.teacherId,
+                    batchId:batch.id
+       })
+     .then(()=>{
+        res.json("lecture added")
+       })}
+    else{
+        res.send()
+    }
+     })
+      
+   
+    .catch((err)=>{
+        console.log(err);
     })
 })
 
 route.post('/:id/batches/:bid/students',(req,res)=>{
-    Student.create({
-        name: req.body.name
-    })
-    .then((student) => {
-     student.setBatches(res.locals.batch.id)
-    }) 
-    .then(() => {
-        console.log("student added")
-        res.sendStatus(200)
+     Batch.findOne({
+         where:{
+             id:req.params.bid,
+             courseId:req.params.id
+         }
      })
+    .then((batch)=>{
+        if(batch){
+            Student.create({
+        name: req.body.name
+      })
+       .then((student) => {
+         student.setBatches(batch.id)
+        }) 
+       .then(() => {
+        res.json("student added")
+        })
+        }
+       else{
+           res.send()
+       }
+    })
+        
+    
 })
 
 route.get('/:id/batches/:bid/teachers',(req,res)=>{

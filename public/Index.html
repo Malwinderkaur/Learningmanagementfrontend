@@ -1,123 +1,20 @@
-<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<!doctype html>
+<html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <title></title>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
-     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <meta charset="utf-8">
+  <title>Myapp</title>
+  <base href="/">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
-<body class="container">
-   <div id="app">
-         <div class="well" style="text-align:right">
-            <button class="btn btn-primary btn-lg" v-on:click="signUp">SignUp</button>
-            <button class="btn btn-primary btn-lg" v-on:click="login">Login</button>
-            <button class="btn btn-primary btn-lg" v-on:click="logout">LogOut</button> 
-         </div>
-         <div class="well">
-           <div class="row">
-            <div class="col-md-5">
-            <button class="btn btn-primary btn-lg" v-on:click="allItems">All Products</button> 
-            <button class="btn btn-primary btn-lg" v-on:click="addproduct">Add Product</button>&nbsp 
-            <button class="btn btn-primary btn-lg" v-on:click="viewcart">View Cart</button>               
-            </div> 
-            <div class="col-md-7"></div> 
-            </div><br/>
-           <div class="row">
-           <div class="col-md-8"></div>
-           <div class="col-md-4">
-               <select v-model="vendorid">
-                <option v-for="vendor in vendors" :value="vendor.id">{{vendor.name}}</option>
-               </select>
-               <button class="btn btn-primary btn-sm" v-on:click="searchByVendor">Filter By Vendor</button>
-           </div> 
-           </div></div>
-           <div class="row" >
-           <div class="col-md-4" v-for="product in products">
-                      <div class="card well" style="text-align:center">
-                      <div class="card-header"><h2> {{product.name}}</h2></div>
-                      <div class="card-body">
-                          Price : Rs.{{product.price}}<br/>
-                          Vendor : {{product.vendor.name}}
-                          </div> 
-                      <div class="card-footer">
-                      <button class="btn btn-primary btn-lg" v-on:click="addToCart(product.id)">BUY</button> 
-                      </div>
-                     </div>          
-          </div>
-          <h3>{{searchmessage}}</h3>
-        </div>
-   </div>
-    <script>
-        let app=new Vue({
-            el:'#app',
-            data:{
-              products:[],
-              vendorid:0,
-              vendors:[],
-              searchmessage:"",
-              count:0,
-              me:false
-            },
-            mounted(){
-                    var $this = this;
-                    axios.get('/products/')
-                    .then((response) => {
-                        this.products = response.data.Products
-                        this.vendors=response.data.Vendors
-                        this.searchmessage=""
-                    })
-            },
-            methods:{
-                addToCart(id){
-                    axios.post("/cart/add",{pid:id})
-                    .then((res)=>{
-                        window.location.href = res.data;
-                    })
-                },
-                allItems(){
-                    axios.get('/products')
-                    .then((response)=>{
-                        this.products = response.data.Products
-                        this.searchmessage=""
-                    })
-                },
-                searchByVendor(){
-                    axios.get("/products/"+this.vendorid)
-                    .then((response)=>{
-                        this.products=response.data
-                        if(this.products.length==0){
-                            this.searchmessage="Oops!!No such products available"
-                        }
-                        else{
-                            this.searchmessage="";
-                        }
-                    })
-                },
-                addproduct(){
-                    window.location.href = '/addProduct';
-                },
-                viewcart(){
-                    axios.get("/cart/")
-                    .then((res)=>{ 
-                    window.location.href = res.data;
-                   })
-                },
-                signUp(){
-                    window.location.href = '/user/signup';
-                },
-                login(){
-                    window.location.href = '/user/login';
-                },
-
-                logout(){
-                    window.location.href = '/user/logout';
-                }
-            }
-        })
-        </script>
-</body>
+<body>
+  <app-root></app-root>
+  <footer>
+  <p>malwinder.kaur@nagarro.com</p>
+</footer>
+<script type="text/javascript" src="inline.bundle.js"></script><script type="text/javascript" src="polyfills.bundle.js"></script><script type="text/javascript" src="styles.bundle.js"></script><script type="text/javascript" src="vendor.bundle.js"></script><script type="text/javascript" src="main.bundle.js"></script></body>
 </html>

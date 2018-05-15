@@ -10,8 +10,26 @@ const app=express()
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use('/',express.static(path.join(__dirname,'..','public')))
+
+
 db.authenticate()
 .then(()=>db.sync())
+.then(()=>{
+    //  Lecture.bulkCreate([
+    //     {name:'L1',subjectId:1,batchId:1,teacherId:1},
+    //     {name:'L2',subjectId:2,batchId:1,teacherId:4},
+    //     {name:'L3',subjectId:1,batchId:1,teacherId:1},
+    //     {name:'L4',subjectId:2,batchId:1,teacherId:5},
+    //     {name:'L5',subjectId:3,batchId:1,teacherId:2}
+    // ])
+    // Batch.bulkCreate([
+    //     {name:'2018 Summer',courseId:1,startAt:'2018-05-22'},
+    //     {name:'2018 Spring',courseId:1,startAt:'2018-06-01'},
+    //     {name:'2018 Fall',courseId:1,startAt:'2018-07-30'}
+    // ])
+    
+})
 
 // .then(()=>{
 //     Course.bulkCreate([
@@ -69,6 +87,15 @@ const routes={
     courses:courseRoute,
    teachers:teacherRoute
 }
+app.get('/batches',(req,res)=>{
+    Batch.findAll()
+    .then((batches)=>{
+        res.json(batches)
+    })
+    .catch((err)=>{
+        console.log(err);
+    })
+})
 app.use('/students',routes.students)
 app.use('/teachers',routes.teachers)
 app.use('/courses',routes.courses)

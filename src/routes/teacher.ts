@@ -12,6 +12,16 @@ route.get('/',(req,res)=>{
     })
 })
 
+route.post('/',(req,res)=>{
+    Teacher.create({name:req.body.name,subjectId:req.body.subjectId})
+    .then(()=>{
+        res.json("teacher added")
+    })
+    .catch((err)=>{
+        console.log(err);
+    })
+})
+
 route.get('/:id',(req,res)=>{
     Teacher.findOne({
         where:{

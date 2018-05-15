@@ -12,6 +12,15 @@ route.get('/', (req, res) => {
         console.log(err);
     });
 });
+route.post('/', (req, res) => {
+    connection_1.Teacher.create({ name: req.body.name, subjectId: req.body.subjectId })
+        .then(() => {
+        res.json("teacher added");
+    })
+        .catch((err) => {
+        console.log(err);
+    });
+});
 route.get('/:id', (req, res) => {
     connection_1.Teacher.findOne({
         where: {

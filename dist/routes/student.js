@@ -22,7 +22,7 @@ route.post('/', (req, res) => {
     })
         .then(() => {
         console.log("student added");
-        res.sendStatus(200);
+        res.json("student added");
     });
 });
 route.use('/:id', (req, res, next) => {
